@@ -8,9 +8,11 @@
 (defn -main
   [& args]
   (loop [current (first black-white)
-         next (rest black-white)]
-    (println (board/render))
+         next (rest black-white)
+         state { :black "e1" :white "e8" }]
+    (println (board/render state))
     (println (str current "'s move: "))
-    (if (= (s/trim (read-line)) "q")
-      (println "Thanks for playing!")
-      (recur (first next) (rest next)))))
+    (let [move (s/trim (read-line))] 
+      (if (= move "q")
+        (println "Thanks for playing!")
+        (recur (first next) (rest next) (assoc state (keyword current) move))))))
