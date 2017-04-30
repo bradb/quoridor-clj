@@ -1,9 +1,9 @@
 (ns quoridor.board
   (:require [clojure.string :as s]))
 
-(def horiz-side "+---+")
-(def blank-column "   ")
-(def eight (partial repeat 8))
+(def ^{:private true} horiz-side "+---+")
+(def ^{:private true} blank-column "   ")
+(def ^{:private true} eight (partial repeat 8))
 
 (defn- beside
   [left right]
