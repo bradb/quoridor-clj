@@ -33,15 +33,30 @@
   [state n]
   (s/join (cons "     " (flatten (repeat 7 [blank-column "     "])))))
 
+(defn- char-range
+  [start end]
+  (map char (range (int start) (+ (int end) 1))))
+
 (defn- row
   [state n]
-  (reduce beside (flatten (for [col (map char (range (int \a) (+ (int \h) 1)))
+  (reduce beside (flatten (for [col (char-range \a \h)
                                 :let [coords (str col n)]]
                             [(square state coords) (column state coords)]))))
+
+(defn- column-headers
+  []
+  (s/join (cons blank-column (map #(str "  " % "  " blank-column)
+                                    (char-range \A \H)))))
+
+(defn- row-label
+  [n]
+  (let [padding (int (/ (count blank-column) 2))
+        padding-str (s/join (repeat padding " "))]
+    (above (above blank-column (s/join [padding-str n padding-str])) blank-column)))
 
 (defn render
   ([] (render { :black "e1" :white "e8" }))
   ([state]
-   (let [rows (reduce above (for [x (range 8 0 -1)]
-                              (above (row state x) (row-separator state x))))]
-     rows)))
+   (let [rows (reduce above (for [n (range 8 0 -1)]
+                              (above (beside (row-label n) (row state n)) (row-separator state n))))]
+     (above (column-headers) rows))))
