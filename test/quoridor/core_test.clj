@@ -1,6 +1,6 @@
-(ns quoridor-clj.core-test
+(ns quoridor.core-test
   (:require [clojure.test :refer :all]
-            [quoridor-clj.core :refer :all]))
+            [quoridor.core :refer :all]))
 
 (deftest a-test
   (testing "FIXME, I fail."
