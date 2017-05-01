@@ -33,9 +33,9 @@
   [state n]
   (s/join (cons "     " (flatten (repeat 7 [blank-column "     "])))))
 
-(defn- char-range
+(defn char-range
   [start end]
-  (map char (range (int start) (+ (int end) 1))))
+  (set (map char (range (int start) (+ (int end) 1)))))
 
 (defn- row
   [state n]
