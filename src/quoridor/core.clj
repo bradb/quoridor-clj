@@ -85,21 +85,46 @@
                     move)
          (not (contains? (set [current-position other-position]) move)))))
 
+(defn- black-won?
+  [state]
+  (= (Character/digit (second (state :black)) 10) 8))
+
+(defn- white-won?
+  [state]
+  (= (Character/digit (second (state :white)) 10) 1))
+
+(defn- game-over?
+  [state]
+  (or (black-won? state) (white-won? state)))
+
+(defn- winner
+  [state]
+  (cond
+    (black-won? state) "black"
+    (white-won? state) "white"
+    :else nil))
+
+(defn- print-game-over
+  [state]
+  (println (str "Congrats " (winner state) ", you won!")))
+
 (defn -main
   [& args]
   (loop [current (first black-white)
          next (rest black-white)
          state { :black "e1" :white "e8" :current current }]
     (println (board/render state))
-    (println (str current "'s move: "))
-    (let [move (s/trim (read-line))] 
-      (cond
-        (= move "q") (println "Thanks for playing!")
-        (allowed-move? state move) (let [next-player (first next)]
-                                     (recur next-player
-                                            (rest next)
-                                            (-> state
-                                             (assoc (keyword current) move)
-                                             (assoc :current next-player))))
-        :else (do (println (str "Sorry, " move " is not a valid move"))
-                  (recur current next state))))))
+    (if (game-over? state)
+      (print-game-over state)
+      (do (println (str current "'s move: "))
+          (let [move (s/trim (read-line))] 
+            (cond
+              (= move "q") (println "Thanks for playing!")
+              (allowed-move? state move) (let [next-player (first next)]
+                                           (recur next-player
+                                                  (rest next)
+                                                  (-> state
+                                                      (assoc (keyword current) move)
+                                                      (assoc :current next-player))))
+              :else (do (println (str "Sorry, " move " is not a valid move"))
+                        (recur current next state))))))))
