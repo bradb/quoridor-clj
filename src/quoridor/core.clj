@@ -85,6 +85,10 @@
                     move)
          (not (contains? (set [current-position other-position]) move)))))
 
+(defn- normalise-wall-move
+  [move]
+  (apply str (sort [(subs move 0 2) (subs move 2 4)])))
+
 (defn- allowed-wall-move?
   [state move]
   (if (and (= (count move) 4)
