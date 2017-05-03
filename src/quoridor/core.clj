@@ -69,19 +69,12 @@
 (defn- allowed-pawn-move?
   [state move]
   (let [current-position (state (keyword (state :current)))
-        other-position (if (= (state :current) "black") (state :white) (state :black))
-        col (first current-position)
-        row (to-digit (second current-position))
-        up-move (str col (+ row 1))
-        down-move (str col (- row 1))
-        left-move (str (-> col int (- 1) char) row)
-        right-move (str (-> col int (+ 1) char) row)
-        jump-move (jump state)]
-    (and (contains? (set (filter valid-move? [up-move
-                                              down-move
-                                              left-move
-                                              right-move
-                                              jump-move]))
+        other-position (if (= (state :current) "black") (state :white) (state :black))]
+    (and (contains? (set (filter valid-move? [(up current-position)
+                                              (down current-position)
+                                              (left current-position)
+                                              (right current-position)
+                                              (jump state)]))
                     move)
          (not (contains? (set [current-position other-position]) move)))))
 
@@ -124,6 +117,10 @@
   [state]
   (println (str "Congrats " (winner state) ", you won!")))
 
+(defn- quit-move?
+  [move]
+  (= move "q"))
+
 (defn -main
   [& args]
   (loop [current (first black-white)
@@ -136,7 +133,7 @@
           (let [move (s/trim (read-line))
                 next-player (first next)]
             (cond
-              (= move "q") (println "Thanks for playing!")
+              (quit-move? move) (println "Thanks for playing!")
               (allowed-wall-move? state move) (recur next-player
                                                      (rest next)
                                                      (-> state
