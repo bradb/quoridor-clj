@@ -66,7 +66,7 @@
       (right? other-pos current-pos) (right current-pos 2)
       (left? other-pos current-pos) (left current-pos 2))))
 
-(defn- allowed-move?
+(defn- allowed-pawn-move?
   [state move]
   (let [current-position (state (keyword (state :current)))
         other-position (if (= (state :current) "black") (state :white) (state :black))
@@ -112,7 +112,7 @@
   [& args]
   (loop [current (first black-white)
          next (rest black-white)
-         state { :black "e1" :white "e8" :current current }]
+         state { :black "e1" :white "e8" :walls #{} :current current }]
     (println (board/render state))
     (if (game-over? state)
       (print-game-over state)
@@ -120,7 +120,7 @@
           (let [move (s/trim (read-line))] 
             (cond
               (= move "q") (println "Thanks for playing!")
-              (allowed-move? state move) (let [next-player (first next)]
+              (allowed-pawn-move? state move) (let [next-player (first next)]
                                            (recur next-player
                                                   (rest next)
                                                   (-> state
