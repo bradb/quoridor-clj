@@ -29,13 +29,23 @@
   [state coords]
   (reduce above (repeat 3 blank-column)))
 
-(defn- row-separator
-  [state n]
-  (s/join (cons "     " (flatten (repeat 7 [blank-column "     "])))))
+(defn- horizontal-wall-at?
+  [state pos]
+  (some (fn [x] (or (= (subs x 0 2) pos)
+                    (= (subs x 2 4) pos)))
+        (state :walls)))
 
 (defn char-range
   [start end]
   (set (map char (range (int start) (+ (int end) 1)))))
+
+(defn- row-separator
+  [state n]
+  (beside blank-column
+          (s/join blank-column (for [c (char-range \a \h)]
+                                 (if (horizontal-wall-at? state (str c n))
+                                   "*****"
+                                   "     ")))))
 
 (defn- row
   [state n]
@@ -59,5 +69,5 @@
   ([state]
    (let [rows (reduce above (for [n (range 8 0 -1)]
                               (above (beside (row-label n) (row state n))
-                                     (row-separator state n))))]
+                                     (row-separator state (- n 1)))))]
      (above (column-headers) rows))))
