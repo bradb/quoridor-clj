@@ -19,3 +19,9 @@ Enter two characters to move your pawn, e.g. `e2`, `c7`, `a4`.
 Enter four characters to place a wall _above_ those squares, e.g. `f2g2` will render a wall between `f2g2` and `f3g3`.
 
 `q` quits.
+
+## Todo
+
+* Render vertical walls
+* Prevent pawns jumping over walls
+* Prevent wall moves that box opponent in
