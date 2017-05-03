@@ -137,6 +137,11 @@
                 next-player (first next)]
             (cond
               (= move "q") (println "Thanks for playing!")
+              (allowed-wall-move? state move) (recur next-player
+                                                     (rest next)
+                                                     (-> state
+                                                         (assoc :walls (conj (state :walls) move))
+                                                         (assoc :current next-player)))
               (allowed-pawn-move? state move) (recur next-player
                                                      (rest next)
                                                      (-> state
