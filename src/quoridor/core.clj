@@ -121,10 +121,10 @@
             (cond
               (= move "q") (println "Thanks for playing!")
               (allowed-pawn-move? state move) (let [next-player (first next)]
-                                           (recur next-player
-                                                  (rest next)
-                                                  (-> state
-                                                      (assoc (keyword current) move)
-                                                      (assoc :current next-player))))
+                                                (recur next-player
+                                                       (rest next)
+                                                       (-> state
+                                                           (assoc (keyword current) move)
+                                                           (assoc :current next-player))))
               :else (do (println (str "Sorry, " move " is not a valid move"))
                         (recur current next state))))))))
