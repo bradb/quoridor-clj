@@ -1,36 +1,21 @@
 # quoridor-clj
 
-FIXME: description
+An implementation of [Quoridor](https://en.wikipedia.org/wiki/Quoridor) in Clojure.
 
-## Installation
+Move your pawn to the other side of the board before your opponent does and you win!
 
-Download from http://example.com/FIXME.
+Still very much a work in progress.
 
 ## Usage
 
-FIXME: explanation
+Start it up with:
 
-    $ java -jar quoridor-clj-0.1.0-standalone.jar [args]
+`$ lein run`
 
-## Options
+### Commands
 
-FIXME: listing of options this app accepts.
+Enter two characters to move your pawn, e.g. `e2`, `c7`, `a4`.
 
-## Examples
+Enter four characters to place a wall _above_ those squares, e.g. `f2g2` will render a wall between `f2g2` and `f3g3`.
 
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
-
-## License
-
-Copyright © 2017 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+`q` quits.
