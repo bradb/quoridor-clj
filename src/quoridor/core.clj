@@ -133,14 +133,14 @@
     (if (game-over? state)
       (print-game-over state)
       (do (println (str current "'s move: "))
-          (let [move (s/trim (read-line))] 
+          (let [move (s/trim (read-line))
+                next-player (first next)]
             (cond
               (= move "q") (println "Thanks for playing!")
-              (allowed-pawn-move? state move) (let [next-player (first next)]
-                                                (recur next-player
-                                                       (rest next)
-                                                       (-> state
-                                                           (assoc (keyword current) move)
-                                                           (assoc :current next-player))))
+              (allowed-pawn-move? state move) (recur next-player
+                                                     (rest next)
+                                                     (-> state
+                                                         (assoc (keyword current) move)
+                                                         (assoc :current next-player)))
               :else (do (println (str "Sorry, " move " is not a valid move"))
                         (recur current next state))))))))
