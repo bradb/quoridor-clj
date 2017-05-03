@@ -58,5 +58,6 @@
   ([] (render { :black "e1" :white "e8" :current "black" :walls #{} }))
   ([state]
    (let [rows (reduce above (for [n (range 8 0 -1)]
-                              (above (beside (row-label n) (row state n)) (row-separator state n))))]
+                              (above (beside (row-label n) (row state n))
+                                     (row-separator state n))))]
      (above (column-headers) rows))))
