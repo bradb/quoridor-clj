@@ -87,7 +87,8 @@
 
 (defn- allowed-wall-move?
   [state move]
-  (if (and (= (count move) 4) (not (contains? (state :walls) move)))
+  (if (and (= (count move) 4)
+           (not (contains? (state :walls) move)))
     true
     false))
 
