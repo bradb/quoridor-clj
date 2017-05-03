@@ -85,6 +85,12 @@
                     move)
          (not (contains? (set [current-position other-position]) move)))))
 
+(defn- allowed-wall-move?
+  [state move]
+  (if (= (count move) 4)
+    true
+    false))
+
 (defn- black-won?
   [state]
   (= (Character/digit (second (state :black)) 10) 8))
