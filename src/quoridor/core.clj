@@ -93,7 +93,12 @@
   [state move]
   (if (and (= (count move) 4)
            (not (contains? (state :walls) move)))
-    true
+    (let [normalised-move (normalise-wall-move move)
+          left-pos (subs normalised-move 0 2)
+          right-pos (subs normalised-move 2 4)]
+      (and (contains? (board/char-range \a \g) (first left-pos))
+           (contains? (board/char-range \1 \7) (second left-pos))
+           (= (right left-pos) right-pos)))
     false))
 
 (defn- black-won?
