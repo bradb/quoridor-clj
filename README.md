@@ -22,6 +22,5 @@ Enter four characters to place a wall _above_ those squares, e.g. `f2g2` will re
 
 ## Todo
 
-* Render vertical walls
 * Prevent pawns jumping over walls
 * Prevent wall moves that box opponent in
