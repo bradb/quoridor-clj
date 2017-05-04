@@ -25,15 +25,33 @@
                         :else        "|   |")
                   horiz-side])))
 
+(defn- vertical-walls
+  [walls]
+  (filter (fn [w] (= (subs w 0 1) (subs w 2 3))) walls))
+
+(defn- horizontal-walls
+  [walls]
+  (clojure.set/difference walls (vertical-walls walls)))
+
+(defn- in-walls?
+  [walls pos]
+  (some (fn [w]
+          (or (= (subs w 0 2) pos)
+              (= (subs w 2 4) pos)))
+        walls))
+
 (defn- column
   [state coords]
-  (reduce above (repeat 3 blank-column)))
+  (let [v-walls (vertical-walls (state :walls))]
+    (reduce above (if (in-walls? v-walls coords)
+                    (repeat 3 " * ")
+                    (repeat 3 blank-column)))))
 
 (defn- horizontal-wall-at?
   [state pos]
   (some (fn [x] (or (= (subs x 0 2) pos)
                     (= (subs x 2 4) pos)))
-        (state :walls)))
+        (horizontal-walls (state :walls))))
 
 (defn char-range
   [start end]
