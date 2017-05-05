@@ -66,17 +66,30 @@
       (right? other-pos current-pos) (right current-pos 2)
       (left? other-pos current-pos) (left current-pos 2))))
 
+(defn- wall-between?
+  [current-position move walls]
+  (let [h-walls (board/horizontal-walls walls)
+        v-walls (board/vertical-walls walls)]
+    (cond
+      (above? move current-position) (board/in-walls? h-walls current-position)
+      (below? move current-position) (board/in-walls? h-walls move)
+      (right? move current-position) (board/in-walls? v-walls current-position)
+      (left? move current-position) (board/in-walls? v-walls move))))
+
 (defn- allowed-pawn-move?
   [state move]
   (let [current-position (state (keyword (state :current)))
-        other-position (if (= (state :current) "black") (state :white) (state :black))]
+        other-position (if (= (state :current) "black")
+                         (state :white)
+                         (state :black))]
     (and (contains? (set (filter valid-move? [(up current-position)
                                               (down current-position)
                                               (left current-position)
                                               (right current-position)
                                               (jump state)]))
                     move)
-         (not (contains? (set [current-position other-position]) move)))))
+         (not (contains? (set [current-position other-position]) move))
+         (not (wall-between? current-position move (state :walls))))))
 
 (defn- normalise-wall-move
   [move]

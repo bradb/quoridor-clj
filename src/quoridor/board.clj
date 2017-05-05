@@ -25,15 +25,15 @@
                         :else        "|   |")
                   horiz-side])))
 
-(defn- vertical-walls
+(defn vertical-walls
   [walls]
   (filter (fn [w] (= (subs w 0 1) (subs w 2 3))) walls))
 
-(defn- horizontal-walls
+(defn horizontal-walls
   [walls]
   (clojure.set/difference walls (vertical-walls walls)))
 
-(defn- in-walls?
+(defn in-walls?
   [walls pos]
   (some (fn [w]
           (or (= (subs w 0 2) pos)
