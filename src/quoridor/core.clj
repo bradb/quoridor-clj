@@ -78,11 +78,14 @@
 
 (defn- neighbours
   [current-position state]
-  (set (filter valid-move? [(up current-position)
-                            (down current-position)
-                            (left current-position)
-                            (right current-position)
-                            (jump state)])))
+  (let [walls (state :walls)]
+    (set (filter (fn [m] (and (valid-move? m)
+                              (not (wall-between? current-position m walls))))
+                 [(up current-position)
+                  (down current-position)
+                  (left current-position)
+                  (right current-position)
+                  (jump state)]))))
 
 (defn- allowed-pawn-move?
   [state move]
@@ -91,8 +94,7 @@
                          (state :white)
                          (state :black))]
     (and (contains? (neighbours current-position state) move)
-         (not (contains? (set [current-position other-position]) move))
-         (not (wall-between? current-position move (state :walls))))))
+         (not (contains? (set [current-position other-position]) move)))))
 
 (defn- normalise-wall-move
   [move]
