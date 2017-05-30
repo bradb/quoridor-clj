@@ -76,18 +76,21 @@
       (right? move current-position) (board/in-walls? v-walls current-position)
       (left? move current-position) (board/in-walls? v-walls move))))
 
+(defn- neighbours
+  [current-position state]
+  (set (filter valid-move? [(up current-position)
+                            (down current-position)
+                            (left current-position)
+                            (right current-position)
+                            (jump state)])))
+
 (defn- allowed-pawn-move?
   [state move]
   (let [current-position (state (keyword (state :current)))
         other-position (if (= (state :current) "black")
                          (state :white)
                          (state :black))]
-    (and (contains? (set (filter valid-move? [(up current-position)
-                                              (down current-position)
-                                              (left current-position)
-                                              (right current-position)
-                                              (jump state)]))
-                    move)
+    (and (contains? (neighbours current-position state) move)
          (not (contains? (set [current-position other-position]) move))
          (not (wall-between? current-position move (state :walls))))))
 
