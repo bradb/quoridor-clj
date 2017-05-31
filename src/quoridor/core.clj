@@ -87,6 +87,25 @@
                   (right current-position)
                   (jump state)]))))
 
+(defn- filter-seen
+  [came-from current state]
+  (filter #(not (contains? (set (keys came-from)) %))
+          (neighbours current state)))
+
+(defn- breadcrumbs
+  [player state]
+  (loop [frontier (list (state player))
+         came-from { (first frontier) nil }]
+    (if (empty? frontier)
+      came-from
+      (let [current (last frontier)
+            remaining-frontier (butlast frontier)
+            unseen-neighbours (filter-seen came-from current state)]
+        (recur (concat unseen-neighbours remaining-frontier)
+               (if (empty? unseen-neighbours)
+                 came-from
+                 (apply assoc came-from (flatten (map #(list % current) unseen-neighbours)))))))))
+
 (defn- allowed-pawn-move?
   [state move]
   (let [current-position (state (keyword (state :current)))
