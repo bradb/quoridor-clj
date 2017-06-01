@@ -144,7 +144,9 @@
   (and (= (count move) 4)
        (not (contains? (state :walls) move)) 
        (valid-wall-move? move)
-       (neither-player-boxed-in? state)))
+       (let [walls (state :walls)
+             potential-state (assoc-in state [:walls] (conj walls move))]
+         (neither-player-boxed-in? potential-state))))
 
 (defn- black-won?
   [state]
