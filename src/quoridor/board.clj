@@ -1,5 +1,6 @@
 (ns quoridor.board
-  (:require [clojure.string :as s]))
+  (:require [clojure.string :as s]
+            [clojure.set]))
 
 (def ^{:private true} horiz-side "+---+")
 (def ^{:private true} blank-column "   ")

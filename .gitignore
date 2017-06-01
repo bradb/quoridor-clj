@@ -1,7 +1,6 @@
 /target
 /classes
 /checkouts
-pom.xml
 pom.xml.asc
 *.jar
 *.class
@@ -12,3 +11,5 @@ pom.xml.asc
 TAGS
 tags
 *#*
+.idea
+*.iml
