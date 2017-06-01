@@ -129,11 +129,16 @@
            (or (= (right first-pos) second-pos)
                (= (up first-pos) second-pos)))))
 
+(defn neither-player-boxed-in?
+  [state move]
+  true)
+
 (defn- allowed-wall-move?
   [state move]
   (and (= (count move) 4)
        (not (contains? (state :walls) move)) 
-       (valid-wall-move? move)))
+       (valid-wall-move? move)
+       (neither-player-boxed-in? state move)))
 
 (defn- black-won?
   [state]
