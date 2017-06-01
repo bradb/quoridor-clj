@@ -1,7 +1,8 @@
 (ns quoridor.core
   (:gen-class)
   (:require [quoridor.board :as board]
-            [clojure.string :as s]))
+            [clojure.string :as s]
+            [clojure.set]))
 
 (def ^{:private true} black-white (cycle ["black" "white"]))
 
@@ -76,37 +77,76 @@
       (right? move current-position) (board/in-walls? v-walls current-position)
       (left? move current-position) (board/in-walls? v-walls move))))
 
+(defn- neighbours
+  [current-position state]
+  (let [walls (state :walls)]
+    (set (filter (fn [m] (and (valid-move? m)
+                              (not (wall-between? current-position m walls))))
+                 [(up current-position)
+                  (down current-position)
+                  (left current-position)
+                  (right current-position)
+                  (jump state)]))))
+
+(defn- filter-seen
+  [came-from current state]
+  (filter #(not (contains? (set (keys came-from)) %))
+          (neighbours current state)))
+
+(defn- breadcrumbs
+  [player state]
+  (loop [frontier (list (state player))
+         came-from { (first frontier) nil }]
+    (if (empty? frontier)
+      came-from
+      (let [current (last frontier)
+            remaining-frontier (butlast frontier)
+            unseen-neighbours (filter-seen came-from current state)]
+        (recur (concat unseen-neighbours remaining-frontier)
+               (if (empty? unseen-neighbours)
+                 came-from
+                 (apply assoc came-from (flatten (map #(list % current) unseen-neighbours)))))))))
+
 (defn- allowed-pawn-move?
   [state move]
   (let [current-position (state (keyword (state :current)))
         other-position (if (= (state :current) "black")
                          (state :white)
                          (state :black))]
-    (and (contains? (set (filter valid-move? [(up current-position)
-                                              (down current-position)
-                                              (left current-position)
-                                              (right current-position)
-                                              (jump state)]))
-                    move)
-         (not (contains? (set [current-position other-position]) move))
-         (not (wall-between? current-position move (state :walls))))))
+    (and (contains? (neighbours current-position state) move)
+         (not (contains? (set [current-position other-position]) move)))))
 
 (defn- normalise-wall-move
   [move]
   (apply str (sort [(subs move 0 2) (subs move 2 4)])))
 
-(defn- allowed-wall-move?
-  [state move]
-  (if (and (= (count move) 4)
-           (not (contains? (state :walls) move)))
-    (let [normalised-move (normalise-wall-move move)
+(defn- valid-wall-move?
+  [move]
+  (let [normalised-move (normalise-wall-move move)
           first-pos (subs normalised-move 0 2)
           second-pos (subs normalised-move 2 4)]
       (and (contains? (board/char-range \a \g) (first first-pos))
            (contains? (board/char-range \1 \7) (second first-pos))
            (or (= (right first-pos) second-pos)
-               (= (up first-pos) second-pos))))
-    false))
+               (= (up first-pos) second-pos)))))
+
+(defn neither-player-boxed-in?
+  [potential-state]
+  (let [black-paths (breadcrumbs :black potential-state)
+        white-paths (breadcrumbs :white potential-state)
+        black-goals #{"a8" "b8" "c8" "d8" "e8" "f8" "g8" "h8"}
+        white-goals #{"a1" "b1" "c1" "d1" "e1" "f1" "g1" "h1"}]
+    (and (not-empty (clojure.set/intersection (set (keys black-paths)) black-goals))
+         (not-empty (clojure.set/intersection (set (keys white-paths)) white-goals)))))
+
+(defn- allowed-wall-move?
+  [state move]
+  (and (= (count move) 4)
+       (not (contains? (state :walls) move)) 
+       (valid-wall-move? move)
+       (let [walls (state :walls)
+             potential-state (assoc-in state [:walls] (conj walls move))]
+         (neither-player-boxed-in? potential-state))))
 
 (defn- black-won?
   [state]
