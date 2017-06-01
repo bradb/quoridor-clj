@@ -1,7 +1,8 @@
 (ns quoridor.core
   (:gen-class)
   (:require [quoridor.board :as board]
-            [clojure.string :as s]))
+            [clojure.string :as s]
+            [clojure.set]))
 
 (def ^{:private true} black-white (cycle ["black" "white"]))
 
@@ -130,15 +131,20 @@
                (= (up first-pos) second-pos)))))
 
 (defn neither-player-boxed-in?
-  [state move]
-  true)
+  [potential-state]
+  (let [black-paths (breadcrumbs :black potential-state)
+        white-paths (breadcrumbs :white potential-state)
+        black-goals #{"a8" "b8" "c8" "d8" "e8" "f8" "g8" "h8"}
+        white-goals #{"a1" "b1" "c1" "d1" "e1" "f1" "g1" "h1"}]
+    (and (not-empty (clojure.set/intersection (set (vals black-paths)) black-goals))
+         (not-empty (clojure.set/intersection (set (vals white-paths)) white-goals)))))
 
 (defn- allowed-wall-move?
   [state move]
   (and (= (count move) 4)
        (not (contains? (state :walls) move)) 
        (valid-wall-move? move)
-       (neither-player-boxed-in? state move)))
+       (neither-player-boxed-in? state)))
 
 (defn- black-won?
   [state]
