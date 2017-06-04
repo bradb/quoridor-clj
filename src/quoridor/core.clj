@@ -70,12 +70,24 @@
 (defn- wall-between?
   [current-position move walls]
   (let [h-walls (board/horizontal-walls walls)
-        v-walls (board/vertical-walls walls)]
+        v-walls (board/vertical-walls walls)
+        up-move (up current-position)
+        down-move (down current-position)
+        right-move (right current-position)
+        left-move (left current-position)
+        jump-up-move (if (not-empty up-move) (up up-move))
+        jump-right-move (if (not-empty right-move) (right right-move))
+        jump-left-move (if (not-empty left-move) (left left-move))
+        jump-down-move (if (not-empty down-move) (down down-move))]
     (cond
-      (above? move current-position) (board/in-walls? h-walls current-position)
-      (below? move current-position) (board/in-walls? h-walls move)
-      (right? move current-position) (board/in-walls? v-walls current-position)
-      (left? move current-position) (board/in-walls? v-walls move))))
+      (= move up-move) (board/in-walls? h-walls current-position)
+      (= move down-move) (board/in-walls? h-walls move)
+      (= move right-move) (board/in-walls? v-walls current-position)
+      (= move left-move) (board/in-walls? v-walls move)
+      (= move jump-up-move) (some #(board/in-walls? h-walls %) [current-position up-move])
+      (= move jump-down-move) (some #(board/in-walls? h-walls %) [down-move jump-down-move])
+      (= move jump-right-move) (some #(board/in-walls? v-walls %) [current-position right-move])
+      (= move jump-left-move) (some #(board/in-walls? v-walls %) [current-position left-move]))))
 
 (defn- neighbours
   [current-position state]

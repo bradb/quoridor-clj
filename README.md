@@ -22,7 +22,6 @@ Enter four characters to place a wall _above_ those squares, e.g. `f2g2` will re
 
 ## Todo
 
-* Prevent pawns moving over walls, when jumping over the opponent's pawn
 * cljs frontend
 * 1-player mode (computer makes random moves)
 * 2-player mode (share link to game)
